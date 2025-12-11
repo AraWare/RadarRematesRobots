@@ -2,37 +2,60 @@ from robocorp.tasks import task
 from robocorp import browser
 
 
-#https://nexuspj.poder-judicial.go.cr/document/avi-1-0155-14256 Para abrir documentos
+urlToBulletinListSite = 'https://nexuspj.poder-judicial.go.cr/search?q=tipoInformacion:(Bolet%C3%ADn%20AND%20Judicial)%20&advanced=true' 
+urlToBulletinSite = lambda documentSearchId: f"https://nexuspj.poder-judicial.go.cr/document/{documentSearchId}"
+page = browser.page()
 @task
-def robot_boletines_poderjudicial():
-    """Extracts the bulletins regarding judicial auctions."""
+def judicial_bulletin_extraction_robot():
 
     browser.configure(
         slowmo=100
     )
 
-    open_the_website()
+    open_website(urlToBulletinListSite)
 
-    gather_the_ids_of_all_bulletins_in_the_list()
+    bulletinIdList = gather_the_ids_of_all_bulletins_in_the_list()
 
-def open_the_website():
-    browser.goto('https://nexuspj.poder-judicial.go.cr/search?q=tipoInformacion:(Bolet%C3%ADn%20AND%20Judicial)%20&advanced=true')
+    extracts_the_information_from_all_bulletins(bulletinIdList)
 
-def gather_the_ids_of_all_bulletins_in_the_list():
-    page = browser.page()
-    page.wait_for_selector("div[ng-repeat='result in results']")
-    results_locator = page.locator("div[ng-repeat='result in results']")
+def open_website(url):
+    page.goto(url)
 
-    bulletinList = []
-
-    for result in results_locator.all():
-
-        document_id = result.locator("div.document-id").get_attribute("title")
-        bulletin_Number = result.locator("#result-title").inner_text()
+def gather_the_ids_of_all_bulletins_in_the_list(): 
     
-        bulletinList.append({
-        "BulletinSearchId": document_id,
-        "BulletinNumber": bulletin_Number,
+    page.wait_for_selector("div[ng-repeat='result in results']")
+    resultsLocator = page.locator("div[ng-repeat='result in results']")
+
+    bulletinIdList = []
+
+    for result in resultsLocator.all():
+
+        documentId = result.locator("div.document-id").get_attribute("title")
+        bulletinNumber = result.locator("#result-title").inner_text()
+    
+        bulletinIdList.append({
+        "BulletinSearchId": documentId,
+        "BulletinNumber": bulletinNumber,
         })
     
-    a = "a"
+    return bulletinIdList
+
+def extracts_the_information_from_all_bulletins(bulletinIdList):
+
+    bulletinDocumentList = []
+
+    for bulletinId in bulletinIdList:
+        open_website(urlToBulletinSite(bulletinId['BulletinSearchId']))
+        page.wait_for_selector("#document")
+        bulletinDocument = page.inner_html("#document")
+
+        bulletinDocumentList.append({
+        "BulletinSearchId": bulletinId['BulletinSearchId'],
+        "BulletinNumber": bulletinId['BulletinNumber'],
+        "BulletinDocument": bulletinDocument
+        })
+
+    return bulletinDocumentList
+
+
+    
