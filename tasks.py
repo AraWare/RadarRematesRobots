@@ -8,9 +8,10 @@ from bs4 import BeautifulSoup
 from auction import Auction
 from bulletin_auction import BulletinAuction
 from configuration_options.judicial_bulletin_options import judicial_bulletin_options
+from database.judicial_bulletin_queries import insert_judicial_bulletins
+
+
 page = browser.page()
-
-
 
 @task
 def judicial_bulletin_extraction_robot():
@@ -27,9 +28,9 @@ def judicial_bulletin_extraction_robot():
 
     bulletin_auction_list = extracts_the_auctions_from_all_documents(bulletin_document_list)
 
-    #write_the_bulletin_auctions_in_the_database(bulletin_auction_list)
+    write_the_bulletin_auctions_in_the_database(bulletin_auction_list)
 
-    write_the_bulletin_auctions_in_a_json_file(bulletin_auction_list)
+    #write_the_bulletin_auctions_in_a_json_file(bulletin_auction_list)
 
 def open_website(url):
     page.goto(url)
@@ -143,4 +144,5 @@ def write_the_bulletin_auctions_in_a_json_file(bulletin_auction_list: list[Bulle
         json.dump([asdict(bulletin) for bulletin in bulletin_auction_list], f, ensure_ascii=False, indent=2)
 
 def write_the_bulletin_auctions_in_the_database(bulletin_auction_list):
-    pass
+
+    insert_judicial_bulletins(bulletin_auction_list)
