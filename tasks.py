@@ -1,14 +1,10 @@
 from datetime import datetime
 import json
 import re
-from pathlib import Path
 from robocorp.tasks import task
 from robocorp import browser
 from bs4 import BeautifulSoup
-from options import Options
-
-CONFIG_FILE_PATH = Path(__file__).resolve().parent / "config.json"
-options = Options.from_json_file(CONFIG_FILE_PATH)
+from configuration_options.judicial_bulletin_options import judicial_bulletin_options
 page = browser.page()
 
 
@@ -20,7 +16,7 @@ def judicial_bulletin_extraction_robot():
         slowmo=100
     )
 
-    open_website(options.url_to_bulletin_list_site)
+    open_website(judicial_bulletin_options.url_to_bulletin_list_site)
 
     bulletin_id_list = gather_the_ids_of_all_bulletins_in_the_list()
 
@@ -39,7 +35,7 @@ def gather_the_ids_of_all_bulletins_in_the_list():
     
     page.wait_for_selector("div[ng-repeat='result in results']")
     results_locator = page.locator("div[ng-repeat='result in results']")
-    results_to_process = results_locator.all()[:options.number_of_bulletins_to_scrape]
+    results_to_process = results_locator.all()[:judicial_bulletin_options.number_of_bulletins_to_scrape]
 
     bulletin_id_list = []
 
@@ -60,7 +56,7 @@ def extracts_the_document_from_all_bulletins(bulletin_id_list):
     bulletin_document_list = []
 
     for bulletin_id in bulletin_id_list:
-        open_website(options.bulletin_site_url(bulletin_id['BulletinSearchId']))
+        open_website(judicial_bulletin_options.bulletin_site_url(bulletin_id['BulletinSearchId']))
         page.wait_for_selector("#document")
         bulletin_document = page.inner_html("#document")
 

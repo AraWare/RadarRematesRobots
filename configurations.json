@@ -1,0 +1,19 @@
+{
+  "judicialBulletinConfigurations": {
+    "urlToBulletinListSite": "https://nexuspj.poder-judicial.go.cr/search?q=tipoInformacion:(Bolet%C3%ADn%20AND%20Judicial)%20&advanced=true",
+    "urlToBulletinSite": "https://nexuspj.poder-judicial.go.cr/document/{documentSearchId}",
+    "numberOfBulletinsToScrape": 1
+  },
+
+  "databaseConfigurations": {
+    "driver": "{ODBC Driver 18 for SQL Server}",
+    "server": "localhost\\MSSQLSERVER02",
+    "database": "RadarRemates",
+    "username": "na",
+    "password": "na",
+    "trustedConnection": "yes",
+    "trustServerCertificate": "yes"
+  }
+}
+
+

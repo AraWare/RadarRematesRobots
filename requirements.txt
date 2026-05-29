@@ -1,0 +1,15 @@
+# Robocorp manages Conda and its requirements directly. The only reason to use a venv (and a requirements.txt file as well)
+# is simply for PyCharm to have an Interpreter to hook up to.
+
+#THIS IS NOT NECESARRY, BUT USEFULL FOR DEVELOPMENT.
+
+#What really matters is the conda.yaml file and robot.yaml file. That is were you really need to add requirements,
+#add those same requirements here so that the IDE knows of them.
+
+#If you are using VS Code this is not necesarry because VS Code has a plugin for Robocorp.
+
+rpaframework==31.0.0        # https://rpaframework.org/releasenotes.html
+robocorp==3.0.0             # https://pypi.org/project/robocorp
+robocorp-browser==2.3.5     # https://pypi.org/project/robocorp-browser
+beautifulsoup4==4.14.3      # https://pypi.org/project/beautifulsoup4
+pyodbc==5.3.0               # https://pypi.org/project/pyodbc/

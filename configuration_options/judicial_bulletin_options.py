@@ -4,20 +4,17 @@ from pathlib import Path
 from typing import Any
 
 
+CONFIG_FILE_PATH = Path(__file__).resolve().parent.parent / "configurations.json"
+
+
 @dataclass(frozen=True)
-class Options:
+class JudicialBulletinOptions:
     url_to_bulletin_list_site: str
     url_to_bulletin_site: str
     number_of_bulletins_to_scrape: int
 
     @classmethod
-    def from_json_file(cls, file_path: Path) -> "Options":
-        with file_path.open("r", encoding="utf-8") as config_file:
-            config = json.load(config_file)
-        return cls.from_dict(config)
-
-    @classmethod
-    def from_dict(cls, config: dict[str, Any]) -> "Options":
+    def from_dict(cls, config: dict[str, Any]) -> "JudicialBulletinOptions":
         url_to_bulletin_list_site = config.get("urlToBulletinListSite")
         url_to_bulletin_site = config.get("urlToBulletinSite")
         number_of_bulletins_to_scrape = config.get("numberOfBulletinsToScrape")
@@ -39,3 +36,12 @@ class Options:
 
     def bulletin_site_url(self, document_search_id: str) -> str:
         return self.url_to_bulletin_site.format(documentSearchId=document_search_id)
+
+    @classmethod
+    def from_configuration(cls) -> "JudicialBulletinOptions":
+        with CONFIG_FILE_PATH.open("r", encoding="utf-8") as config_file:
+            config = json.load(config_file)
+        return cls.from_dict(config.get("judicialBulletinConfigurations"))
+
+
+judicial_bulletin_options = JudicialBulletinOptions.from_configuration()
